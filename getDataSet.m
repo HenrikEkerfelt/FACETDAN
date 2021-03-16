@@ -33,12 +33,12 @@ function [data, header] = getDataSet(dataSetID)
         else %% assumes running from facet-srv20
             searchPath = '/nas/nas-li20-pm00/';
         end
-        [foundDir, outp] = unix(sprintf( 'find %s -name "*%s" 2>/dev/null', searchPath, dataSetID ));
+        [~, outp] = unix(sprintf( 'find %s -name "*%s" 2>/dev/null', searchPath, dataSetID ));
     else
         error('Currently not supported on your operating system')
     end
 
-    if ~foundDir
+    if isempty(outp)
         error('In getDataSet.m: Could not find the dataSet');
         
     end
