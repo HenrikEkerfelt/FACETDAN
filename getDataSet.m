@@ -13,7 +13,7 @@ function [data, header] = getDataSet(dataSetID)
         load(storagePath);
         
         if isfield(paths,fieldName)
-            dataSetInfo = getfield(paths,fieldName);
+            dataSetInfo = paths.(fieldName);
             if exist(dataSetInfo.path, 'file')
                 load(dataSetInfo.path);
                 data = data.raw;
@@ -26,7 +26,18 @@ function [data, header] = getDataSet(dataSetID)
     
     %% Search for dataset
     % find ~ -name "*21190" 2>/dev/null
-    [foundDir, outp] = unix(sprintf( 'find ~ -name "*%s" 2>/dev/null', dataSetID ));
+    
+    if isunix 
+        if ismac %% assumes running from Henrik's machine
+            searchPath = '/Users/henrik01/FACETData';
+        else %% assumes running from facet-srv20
+            searchPath = '/nas/nas-li20-pm00/';
+        end
+        [foundDir, outp] = unix(sprintf( 'find %s -name "*%s" 2>/dev/null', searchPath, dataSetID ));
+    else
+        error('Currently not supported on your operating system')
+    end
+
     if ~foundDir
         error('In getDataSet.m: Could not find the dataSet');
         
